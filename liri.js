@@ -46,18 +46,18 @@ switch (command) {
         callTweets();
         break;
 
-// WORKING!
+        // WORKING!
     case "spotify-this-song":
         spotSong();
         break;
 
-// WORKING!
+        // WORKING!
     case "movie-this":
         movieSearch();
         break;
 
     case "do-what-it-says":
-        what();
+        rollTheBox();
         break;
 }
 
@@ -109,18 +109,15 @@ function movieSearch() {
             console.log("Actresses and Actors: " + JSON.parse(body).Actors);
             console.log("Rotten Tomatoes URL: https://www.rottentomatoes.com/m/" + movieName + "/");
             console.log("--------------------------------------------------------------------------------------------");
-
         }
 
         if (!error && response.statusCode === 200 && movieName == "") {
             var movieName = "Mr. Nobody";
         }
 
-
         if (error) {
             console.log("Error");
         }
-
 
     });
 }
@@ -150,12 +147,47 @@ function spotSong() {
         console.log("Song Title : " + data.tracks.items[0].name);
         console.log("Album: " + data.tracks.items[0].album.name);
         console.log("Spotify URL: " + data.tracks.items[0].external_urls.spotify);
-        
 
     });
 }
 
 
 function callTweets() {
-	
+
+    var client = new Twitter({
+        consumer_key: keys.twitterKeys.consumer_key,
+        consumer_secret: keys.twitterKeys.consumer_secret,
+        access_token_key: keys.twitterKeys.access_token_key,
+        access_token_secret: keys.twitterKeys.access_token_secret
+    });
+
+    var params = { screen_name: 'Nico_Santa_Ana' };
+    client.get('statuses/user_timeline', params, function(error, tweets, response) {
+        if (!error) {
+
+            for (var i = 0; i < 20; i++) {
+                console.log("----------------------------------------------------------------------------------------");
+                console.log("Tweet: " + tweets[i].text);
+                console.log("Time if Tweet: " + tweets[i].created_at);
+                console.log("----------------------------------------------------------------------------------------");
+            }
+
+            // console.log(JSON.parse(response.body, null, 2));
+        }
+    });
+}
+
+
+function rollTheBox() {
+
+	fs.readFile("random.txt", "utf8", function(error, data){
+		if (error){
+			console.log("Error");
+		}
+
+		var randomText = data.split(",");
+		console.log(randomText);
+
+		spotSong(randomText[1]);
+	})
 }
